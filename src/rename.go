@@ -10,6 +10,8 @@ import (
 	"path"
 )
 
+const version = "0.2.0"
+
 type Args struct {
 	Files       []string
 	Expression  string
@@ -34,7 +36,7 @@ func ParseArgs() *Args {
 	interactivePtr := flag.BoolP("interactive", "i", false, "Ask for confirmation before renaming each file.")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr,
-			"rename - Rename files through a sed-replace expression\n" +
+			"rename v" + version + " - Rename files through a sed-replace expression\n" +
 			"Usage:  rename [options] <sed-replace expression> [files...]\n" +
 			"  Options:\n" +
 			"    -c/--copy:         Copy instead of move.\n" +
