@@ -1,0 +1,21 @@
+image: golang:latest
+
+stages:
+  - build
+
+building:
+  stage: build
+  script:
+    - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w"
+    - CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags="-s -w" -o rename_pi
+    - CGO_ENABLED=0 GOOS=freebsd GOARCH=amd64 go build -ldflags="-s -w" -o rename_bsd
+    - CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o rename_osx
+    - CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o rename.exe
+  artifacts:
+    name: rename
+    paths:
+     - rename
+     - rename_pi
+     - rename_bsd
+     - rename_osx
+     - rename.exe
