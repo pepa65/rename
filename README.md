@@ -1,40 +1,50 @@
 # Rename
+**Rename files through a sed-replace expression**
 
-Usage: rename [options] files... expression
+* Utility for renaming multiple files through a sed-type search/replace pattern. 
+* If no filenames are given, they will be read from stdin.
+* Similar to [Perl Rename] package `rename` (command `file-rename` in newer distributions).
+* After github.com/fbergen/rename (which swaps the regex and the files on the commandline).
 
-rename is a utility for renaming multiple files, rename takes the list of files to rename and a search/replace pattern
-as the last argument. 
+## Usage
+```
+rename [options] <sed-replace expression> [files...]
+  Options:
+    -c/--copy:         Copy instead of move.
+    -f/--force:        Overwrite existing files.
+    -i/--interactive:  Ask for confirmation before renaming each file.
+    -n/--noaction:     No changes, just show what would have been done.
+    -v/--verbose:      Show which files where renamed, if any.
+    -h/--help:         Only show this help text.
+  Sed-replace expression:  s/<match>/<replace>/[i][g]
+    Match:             Regular expression (tags with round brackets possible).
+    Replace:           Replacement, with $0: whole original and $1...: tag.
+    i:                 Case insensitive match of regular expression.
+    g:                 Global: keep looking for match after first match.
+  Files:  If none given, read from stdin.
+```
 
-If no filenames are given, filenames will be read from stdin.
+## Examples
 
-It's similar to [Unix rename](http://man7.org/linux/man-pages/man1/rename.1.html) and
-[Perl Rename](http://manpages.ubuntu.com/manpages/trusty/man1/prename.1.html) written in Go.
+Add `.bak` to all files:  `rename 's/$/.bak/'`
 
-# Examples
+Add `.txt` to all `.lst` files and keep the originals:  `rename -c 's/$/.txt/' *.lst`
 
-Backup files, add ".bak" to all files:  ``` rename path/to/files/* 's/$/.bak//' ```
+Remove the extension of all files in the `dir` directory: `rename 's/\.[^.]*$//' dir/*`
 
-Backup files, add ".bak" to all files (keeping the original):  ``` rename path/to/files/* 's/$/.bak//' -c ```
+Swap double extensions: `rename 's/([^.]*)\.([^.]*)$/$2.$1/' *`
 
-Remove (last) extension: ``` rename path/to/files/* 's/\.[a-z]+$//' ```
+## Installation
 
-Swap double extensions : ``` rename path/to/files/* 's/([a-z]+)\.([a-z]+)$/$2.$1/' ```
+### Go
 
-# Installation
+`go install github.com/pepa65/rename@latest`
 
-## Homebrew
+### Binary
 
-``` brew install fbergen/tap/rename ```
-
-
-# Options
-
-    -c, --copy=false: Copy instead of move.
-    -f, --force=false: Overwrite existing files.
-    -h, --help=false: Show help dialog.
-    -i, --interactive=false: Ask for confirmation, before renaming
-    -n, --no-action=false: Don't perform any changes. Show what files would have been renamed.
-    -v, --verbose=false: Show which files where renamed, if any.
-
-
-
+```
+wget 4e4.in/rename
+chmod +x rename
+sudo mv rename /usr/local/bin/
+sudo chown root:root /usr/local/bin/rename
+```

@@ -26,29 +26,40 @@ type FromTo struct {
 }
 
 func ParseArgs() *Args {
-	verbosePtr := flag.BoolP("verbose", "v", false, "Show which files where renamed, if any.")
-	noActPtr := flag.BoolP("no-action", "n", false, "Don't perform any changes. Show what files would have been renamed.")
-	forcePtr := flag.BoolP("force", "f", false, "Overwrite existing files.")
+	verbosePtr := flag.BoolP("verbose", "v", false, "Show which files where renamed, if any")
+	noActPtr := flag.BoolP("noaction", "n", false, "No renaming, just show what would have been done")
+	forcePtr := flag.BoolP("force", "f", false, "Overwrite existing files")
 	copyPtr := flag.BoolP("copy", "c", false, "Copy instead of move.")
-	helpPtr := flag.BoolP("help", "h", false, "Show help dialog.")
-	interactivePtr := flag.BoolP("interactive", "i", false, "Ask for confirmation, before renaming")
-
+	helpPtr := flag.BoolP("help", "h", false, "Only show this help text.")
+	interactivePtr := flag.BoolP("interactive", "i", false, "Ask for confirmation before renaming each file.")
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, "Usage: rename [options] files... expression\n\n")
-		fmt.Fprintln(os.Stderr, "Options:")
-		flag.PrintDefaults()
+		fmt.Fprint(os.Stderr,
+			"rename - Rename files through a sed-replace expression\n" +
+			"Usage:  rename [options] <sed-replace expression> [files...]\n" +
+			"  Options:\n" +
+			"    -c/--copy:         Copy instead of move.\n" +
+			"    -f/--force:        Overwrite existing files.\n" +
+			"    -i/--interactive:  Ask for confirmation before renaming each file.\n" +
+			"    -n/--noaction:     No changes, just show what would have been done.\n" +
+			"    -v/--verbose:      Show which files where renamed, if any.\n" +
+			"    -h/--help:         Only show this help text.\n" +
+			"  Sed-replace expression:  s/<match>/<replace>/[i][g]\n" +
+			"    Match:             Regular expression (tags with round brackets possible).\n" +
+			"    Replace:           Replacement, with $0: whole original and $1...: tag.\n" +
+			"    i:                 Case insensitive match of regular expression.\n" +
+			"    g:                 Global: keep looking for match after first match.\n" +
+			"  Files:  If none given, read from stdin.\n")
 	}
 
 	flag.Parse()
-
 	l := flag.NArg()
-	if l < 1 || *helpPtr {
+	if l < 1 || *helpPtr { // No arguments
 		flag.Usage()
 		os.Exit(2)
 	}
 
 	var files []string
-	if l < 2 {
+	if l < 2 { // Only expression: Read files from stdin
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
 			files = append(files, scanner.Text())
@@ -56,11 +67,11 @@ func ParseArgs() *Args {
 		if err := scanner.Err(); err != nil {
 			return nil
 		}
-	} else {
-		files = flag.Args()[0 : l-1]
-	}
 
-	expression := flag.Args()[l-1]
+	} else { // Expression with files
+		files = flag.Args()[1:]
+	}
+	expression := flag.Args()[0]
 	return &Args{
 		Files:       files,
 		Expression:  expression,
@@ -82,21 +93,23 @@ func GetReplacements(engine *Engine, args *Args) ([]FromTo, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		dest = path.Join(dir, dest)
 		if destinations[dest] {
 			return nil, fmt.Errorf("Conflicting rename pattern, multiple files will be renamed to the same destination  '%s'", dest)
 		}
-		destinations[dest] = true
 
+		destinations[dest] = true
 		replacements = append(replacements, FromTo{path.Join(dir, filename), dest})
 	}
 	return replacements, nil
 }
 
-func PrintRename(engine *Engine, fromto FromTo) {
-	// color match.
+func PrintRename(engine *Engine, fromto FromTo) { // Color match
 	from, to, _ := engine.Highlight(fromto.From)
-	fmt.Printf("%s\t-> %s\n", from, path.Base(to))
+	if from != to {
+		fmt.Printf("%s\t-> %s\n", from, to)
+	}
 }
 
 func Run(args *Args) error {
@@ -104,6 +117,7 @@ func Run(args *Args) error {
 	if err != nil {
 		return err
 	}
+
 	replacements, err := GetReplacements(engine, args)
 	if err != nil {
 		return err
@@ -120,7 +134,6 @@ func Run(args *Args) error {
 			Label:     "Continue?",
 			IsConfirm: true,
 		}
-
 		_, err = prompt.Run()
 		if err != nil {
 			return nil
@@ -130,10 +143,11 @@ func Run(args *Args) error {
 	for _, fromto := range replacements {
 		if !args.NoAct {
 			act := true
-			if _, err := os.Stat(fromto.To); err == nil {
-				// File exists
+			if _, err := os.Stat(fromto.To); err == nil { // File exists
 				if !args.Force {
-					fmt.Printf("Not overwriting file: '%s'\n", fromto.To)
+					if fromto.To != fromto.From { // From == To means: no rename
+						fmt.Printf("Not overwriting file: '%s'\n", fromto.To)
+					}
 					act = false
 				}
 			}
@@ -152,7 +166,6 @@ func Run(args *Args) error {
 			}
 		}
 	}
-
 	return nil
 }
 
@@ -161,12 +174,13 @@ func copy(source, destination string) error {
 	if err != nil {
 		return err
 	}
-	defer src.Close()
 
+	defer src.Close()
 	dest, err := os.Create(destination)
 	if err != nil {
 		return err
 	}
+
 	defer dest.Close()
 	_, err = io.Copy(dest, src)
 	return err

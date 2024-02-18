@@ -13,7 +13,7 @@ type instruction interface {
 	Highlight(src string) (string, string, error)
 }
 
-// instruction, for now chaining expressions is not supported
+// Instruction: chaining expressions not supported
 type Engine struct {
 	ins instruction
 }
@@ -30,6 +30,7 @@ func (s *substitution) Highlight(src string) (string, string, error) {
 		if !first && !s.global {
 			return match
 		}
+
 		first = false
 		return s.pattern.ReplaceAllString(match, color.RedString("${0}"))
 	})
@@ -39,6 +40,7 @@ func (s *substitution) Highlight(src string) (string, string, error) {
 		if !first && !s.global {
 			return match
 		}
+
 		first = false
 		return s.pattern.ReplaceAllString(match, color.GreenString(s.repl))
 	})
@@ -52,6 +54,7 @@ func (s *substitution) Run(src string) (string, error) {
 		if !first && !s.global {
 			return match
 		}
+
 		first = false
 		return s.pattern.ReplaceAllString(match, s.repl)
 	}), nil
@@ -65,6 +68,7 @@ func NewEngine(expression string) (*Engine, error) {
 func (e *Engine) Run(src string) (string, error) {
 	return e.ins.Run(src)
 }
+
 func (e *Engine) Highlight(src string) (string, string, error) {
 	return e.ins.Highlight(src)
 }
@@ -75,12 +79,14 @@ func parse(expression string) (instruction, error) {
 	if len(parts) < 3 {
 		return nil, fmt.Errorf("Invalid expression '%s'", expression)
 	}
+
 	switch parts[0] {
 	case "s":
 		l := len(parts)
 		if l < 4 {
 			return nil, fmt.Errorf("Unterminated substitution command, required format 's/from/to/'")
 		}
+
 		var flags []rune
 		if l > 3 {
 			flags = []rune(parts[3])
@@ -91,6 +97,7 @@ func parse(expression string) (instruction, error) {
 		}
 
 		return subs, nil
+
 	default:
 		return nil, fmt.Errorf("unrecognized command '%s'", parts[0])
 	}

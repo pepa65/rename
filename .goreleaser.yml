@@ -22,20 +22,5 @@ archives:
     windows: Windows
     386: i386
     amd64: x86_64
-brew:
-  github:
-    owner: fbergen
-    name: homebrew-tap
-  folder: Formula
-  homepage:  https://github.com/fberge/rename
-  description: Unix Rename command, written in Go
 checksum:
   name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-next"
-changelog:
-  sort: asc
-  filters:
-    exclude:
-    - '^docs:'
-    - '^test:'

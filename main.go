@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/fbergen/rename/src"
+
+	"github.com/pepa65/rename/src"
 )
 
 func main() {
