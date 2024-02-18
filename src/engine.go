@@ -2,9 +2,10 @@ package rename
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"regexp"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 // Pre-compiled instructions to run

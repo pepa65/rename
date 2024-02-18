@@ -1,10 +1,12 @@
-# rename v0.2.1
+# rename v0.2.2
 **Rename files through a sed-replace expression**
 
 * Utility for renaming multiple files through a sed-type search/replace pattern. 
 * If no filenames are given, they will be read from stdin.
 * Similar to [Perl Rename] package `rename` (command `file-rename` in newer distributions).
 * After github.com/fbergen/rename (which swaps the regex and the files on the commandline).
+* MIT License of github.com/fbergen/rename copyright 2019 Fredrik Bergenlid.
+* Relicenced under GPLv3+ copyright 2024 github.com/pepa65.
 
 ## Usage
 ```

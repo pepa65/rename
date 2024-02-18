@@ -3,14 +3,15 @@ package rename
 import (
 	"bufio"
 	"fmt"
-	"github.com/manifoldco/promptui"
-	flag "github.com/ogier/pflag"
 	"io"
 	"os"
 	"path"
+
+	"github.com/manifoldco/promptui"
+	flag "github.com/ogier/pflag"
 )
 
-const version = "0.2.1"
+const version = "0.2.2"
 
 type Args struct {
 	Files       []string
