@@ -1,16 +1,19 @@
-# rename v0.2.3
+# rename v0.2.4
 **Rename files through a sed-replace expression**
 
 * Utility for renaming multiple files through a sed-type search/replace pattern. 
 * If no filenames are given, they will be read from stdin.
-* Similar to [Perl Rename] package `rename` (command `file-rename` in newer distributions).
-* After github.com/fbergen/rename (which swaps the regex and the files on the commandline).
-* MIT License of github.com/fbergen/rename copyright 2019 Fredrik Bergenlid.
-* Relicenced under GPLv3+ copyright 2024 github.com/pepa65.
+* Similar to Perl-rename package `rename` whose binary can be `file-rename` in newer distributions,
+  as `util-linux` now has a `rename` binary (sometimes `rename.ul`) that is not as versatile.
+* Commandline order compatible with Perl-rename (and options `-f -n -v -h`).
+* After github.com/fbergen/rename (which swaps the expression and the files on the commandline).
+* MIT License of github.com/fbergen/rename copyright 2019 Fredrik Bergenlid,
+  relicenced under GPLv3+ copyright 2024 github.com/pepa65.
 
 ## Usage
 ```
-rename [options] <sed-replace expression> [files...]
+rename v0.2.4 - Rename files through a sed-replace expression
+Usage:  rename [options] <sed-replace expression> [files...]
   Options:
     -c/--copy:         Copy instead of move.
     -f/--force:        Overwrite existing files.
@@ -27,23 +30,16 @@ rename [options] <sed-replace expression> [files...]
 ```
 
 ## Examples
-
-Add `.bak` to all files:  `rename 's/$/.bak/'`
-
-Add `.txt` to all `.lst` files and keep the originals:  `rename -c 's/$/.txt/' *.lst`
-
-Remove the extension of all files in the `dir` directory: `rename 's/\.[^.]*$//' dir/*`
-
-Swap double extensions: `rename 's/([^.]*)\.([^.]*)$/$2.$1/' *`
+* Add `.bak` to all files:  `rename 's/$/.bak/'`
+* Add `.txt` to all `.lst` files and keep the originals:  `rename -c 's/$/.txt/' *.lst`
+* Remove the extension of all files in the `dir` directory: `rename 's/\.[^.]*$//' dir/*`
+* Swap double extensions: `rename 's/([^.]*)\.([^.]*)$/$2.$1/' *`
 
 ## Installation
-
 ### Go
-
 `go install github.com/pepa65/rename@latest`
 
 ### Binary
-
 ```
 wget 4e4.in/rename
 chmod +x rename
