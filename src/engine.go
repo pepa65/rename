@@ -100,7 +100,7 @@ func parse(expression string) (instruction, error) {
 		return subs, nil
 
 	default:
-		return nil, fmt.Errorf("unrecognized command '%s'", parts[0])
+		return nil, fmt.Errorf("unrecognized command '%s', only 's' allowed", parts[0])
 	}
 }
 
@@ -115,7 +115,7 @@ func newSubstitution(pattern, replacement string, flags []rune) (instruction, er
 		case 'i':
 			caseInsensitive = true
 		default:
-			err = fmt.Errorf("Unrecognized substitution flag '%v'", string(char))
+			err = fmt.Errorf("Unrecognized substitution flag '%v', only 'i' and 'g' allowed", string(char))
 		}
 		if err != nil {
 			return nil, err

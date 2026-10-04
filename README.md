@@ -1,4 +1,4 @@
-# rename v0.2.4
+# rename v0.2.6
 **Rename files through a sed-replace expression**
 
 * Utility for renaming multiple files through a sed-type search/replace pattern. 
@@ -12,7 +12,7 @@
 
 ## Usage
 ```
-rename v0.2.4 - Rename files through a sed-replace expression
+rename v0.2.6 - Rename files through a sed-replace expression
 Usage:  rename [options] <sed-replace expression> [files...]
   Options:
     -c/--copy:         Copy instead of move.

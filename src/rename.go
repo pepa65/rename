@@ -11,7 +11,7 @@ import (
 	flag "github.com/ogier/pflag"
 )
 
-const version = "0.2.4"
+const version = "0.2.5"
 
 type Args struct {
 	Files       []string
